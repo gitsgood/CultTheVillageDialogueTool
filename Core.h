@@ -31,7 +31,7 @@ char getch() {
 
 constexpr const char* YesOrNoStr{ "\n\t\tPress Y to continue, or N to repeat this step...\n" };
 
-#define DEBUG 1
+#define DEBUG 0
 
 // ENTER _getch() = 13
 // Y _getch() = 121
