@@ -1,0 +1,54 @@
+#pragma once
+
+#ifndef JSONFILEMANAGERSTATICS_H
+#define JSONFILEMANAGERSTATICS_H
+
+#include "Core.h"
+#include "DialogueContent.h"
+
+class JsonFileManagerStatics
+{
+public:
+
+	inline static std::filesystem::path SearchPath{ "./" };
+	inline static std::string SearchString{ "OurFuckingDialogueJSONs" };
+	inline static std::filesystem::path DestinationPath{ "" };
+	inline static std::string JsonFileName{ "DialogueFile" };
+
+	/**
+	* @brief Will try to find the specific directory for which this tool was designed for.
+	*/
+	static bool FindTargetDirectory();
+
+	/**
+	* @brief Opens a new file and inputs the contents gathered by this tool.
+	*/
+	static void CreateTheDialogueJsonFile();
+
+	/**
+	* @brief Will put together a string that is fully JSON formatted.
+	*
+	* @see CreateTheDialogueJsonFile for where this gets called.
+	*
+	* @return Formatted JSON string containing the full amount of information gathered by this tool.
+	*/
+	static std::string GenerateTheFinalJsonString();
+
+	/**
+	* @brief Makes sure the input string doesn't hold any characters that mess with JSON formatting.
+	*
+	* @see DialogueParent::StringifyForJson and its implementations for info on how this gets called.
+	*
+	* @param[in] inStringToParse The string that needs double checking.
+	*
+	* @return A string with any singular " or \ characters preceded with a backslash( \ ).
+	*/
+	static std::string ParserForJson(const std::string& inStringToParse);
+
+	/**
+	* @brief Takes a boolean and delivers the string.
+	*/
+	static std::string BoolParserForJson(const bool inBoolToParse);
+};
+
+#endif // !JSONFILEMANAGERSTATICS_H
