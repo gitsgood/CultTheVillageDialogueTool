@@ -66,12 +66,12 @@ void DialogueTree::PopulateMaps()
 	PopulateLamda(DialogueNodeContainer, NodeMap);
 }
 
-void DialogueTree::EdgeInput(const std::string& inEdgeId, const std::string& inPreviousReply, const int inLocalIndex, const int inLocalTotal)
+void DialogueTree::EdgeInput(const std::string& inEdgeId, const DialogueNode* inPreviousNode, const int inLocalIndex, const int inLocalTotal)
 {
 	CoreHelpers::ClearScreen();
 	std::cout
 		<< "Player reply " << inLocalIndex << " out of " << inLocalTotal << " in response to:\n"
-		<< "\t\"" << inPreviousReply << "\"\n"
+		<< "\t\"" << inPreviousNode->NPCDialogue << "\"\n"
 		<< "\nWhat is the player's say?\n";
 	std::string DialogueContent{ "" };
 	std::getline(std::cin, DialogueContent);
@@ -83,22 +83,22 @@ void DialogueTree::EdgeInput(const std::string& inEdgeId, const std::string& inP
 	NextNodeId = CoreHelpers::YesOrNo() ? "" : "Node" + std::to_string(NodeCount);
 
 	DialogueEdge ThisEdge(inEdgeId, DialogueContent, NextNodeId);
-	FlagSetter(ThisEdge);
+	FlagSetter(ThisEdge, inPreviousNode);
 
 	DialogueEdgeContainer.push_back(ThisEdge);
 
 	if (NextNodeId != "")
 	{
-		NodeInput(NextNodeId, DialogueContent);
+		NodeInput(NextNodeId, &ThisEdge);
 	}
 }
 
-void DialogueTree::NodeInput(const std::string& inNodeId, const std::string& inPreviousReply)
+void DialogueTree::NodeInput(const std::string& inNodeId, const DialogueEdge* inPreviousEdge)
 {
 	CoreHelpers::ClearScreen();
 	NodeCount++;
 
-	if (inNodeId == "START")
+	if (!inPreviousEdge)
 	{
 		std::cout << "What does " << NPCId << " say?\n\n";
 	}
@@ -106,7 +106,7 @@ void DialogueTree::NodeInput(const std::string& inNodeId, const std::string& inP
 	{
 		std::cout
 			<< "What does " << NPCId << " say in reply to:\n"
-			<< "\t\"" << inPreviousReply << "\"\n";
+			<< "\t\"" << inPreviousEdge->PlayerDialogue << "\"\n";
 	}
 	std::string DialogueContent{ "" };
 	std::getline(std::cin, DialogueContent);
@@ -123,7 +123,7 @@ void DialogueTree::NodeInput(const std::string& inNodeId, const std::string& inP
 	}
 
 	DialogueNode ThisNode(DialogueContent, OutgoingEdgeIds, inNodeId);
-	FlagSetter(ThisNode);
+	FlagSetter(ThisNode, inPreviousEdge);
 
 	DialogueNodeContainer.push_back(ThisNode);
 
@@ -131,16 +131,16 @@ void DialogueTree::NodeInput(const std::string& inNodeId, const std::string& inP
 	for (const std::string& Id : OutgoingEdgeIds)
 	{
 		BirthedEdgeCount++;
-		EdgeInput(Id, DialogueContent, BirthedEdgeCount, ReplyCount);
+		EdgeInput(Id, &ThisNode, BirthedEdgeCount, ReplyCount);
 	}
 }
 
-template<typename T>
-void DialogueTree::FlagSetter(T& DialogueObject)
+template<typename T, typename V>
+void DialogueTree::FlagSetter(T& DialogueObject, const V* PreviousDialogueObject)
 {
 	std::cout
 		<< "\nDo you wish to implement dialogue flags here?\n"
-		<< "(If you say no, all flags are set to false)\n"
+		<< "(If you say No, flags will roll over from the previous stage, and if you never set any flags, they will all be false.)\n"
 		<< "\t\t[Y]: Yes\t[N]: No\n";
 	if (CoreHelpers::YesOrNo())
 	{
@@ -166,9 +166,19 @@ void DialogueTree::FlagSetter(T& DialogueObject)
 	}
 	else
 	{
-		DialogueObject.bIsConvinced = false;
-		DialogueObject.bIsAngered = false;
-		DialogueObject.bIsAntagonistic = false;
-		DialogueObject.bIsVillagerKilled = false;
+		if(!PreviousDialogueObject)
+		{
+			DialogueObject.bIsConvinced = false;
+			DialogueObject.bIsAngered = false;
+			DialogueObject.bIsAntagonistic = false;
+			DialogueObject.bIsVillagerKilled = false;
+		}
+		else
+		{
+			DialogueObject.bIsConvinced = PreviousDialogueObject->bIsConvinced;
+			DialogueObject.bIsAngered = PreviousDialogueObject->bIsAngered;
+			DialogueObject.bIsAntagonistic = PreviousDialogueObject->bIsAntagonistic;
+			DialogueObject.bIsVillagerKilled = PreviousDialogueObject->bIsVillagerKilled;
+		}
 	}
 }

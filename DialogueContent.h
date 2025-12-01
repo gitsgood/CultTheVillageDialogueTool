@@ -65,10 +65,10 @@ struct DialogueTree
 	inline static std::vector<DialogueEdge> DialogueEdgeContainer;
 	inline static std::vector<DialogueNode> DialogueNodeContainer;
 
-	static void EdgeInput(const std::string& inEdgeId, const std::string& inPreviousReply, const int inLocalIndex, const int inLocalTotal);
-	static void NodeInput(const std::string& inNodeId = "START", const std::string& inPreviousReply = "");
+	static void EdgeInput(const std::string& inEdgeId, const DialogueNode* inPreviousNode, const int inLocalIndex, const int inLocalTotal);
+	static void NodeInput(const std::string& inNodeId = "START", const DialogueEdge* inPreviousReply = nullptr);
 
-	template <typename T> static void FlagSetter(T& DialogueObject);
+	template <typename T, typename V> static void FlagSetter(T& DialogueObject, const V* PreviousDialogueObject = nullptr);
 
 	inline static std::unordered_map<std::string, DialogueEdge> EdgeMap;
 	inline static std::unordered_map<std::string, DialogueNode> NodeMap;
