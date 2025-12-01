@@ -146,27 +146,31 @@ void DialogueTree::FlagSetter(T& DialogueObject, const V* PreviousDialogueObject
 	{
 		std::cout
 			<< "\nIs the villager convinced to support you?\n"
+			<< "Previous flag is: " << (PreviousDialogueObject ? JsonFileManagerStatics::BoolParserForJson(PreviousDialogueObject->bIsConvinced) : "Not attributed") << "\n\n"
 			<< "\t\t[Y]: Yes\t[N]: No\n";
 		DialogueObject.bIsConvinced = CoreHelpers::YesOrNo();
 
 		std::cout
 			<< "\nIs the villager angered by you?\n"
+			<< "Previous flag is: " << (PreviousDialogueObject ? JsonFileManagerStatics::BoolParserForJson(PreviousDialogueObject->bIsAngered) : "Not attributed") << "\n\n"
 			<< "\t\t[Y]: Yes\t[N]: No\n";
 		DialogueObject.bIsAngered = CoreHelpers::YesOrNo();
 
 		std::cout
 			<< "\nIs the villager antagonised by you?\n"
+			<< "Previous flag is: " << (PreviousDialogueObject ? JsonFileManagerStatics::BoolParserForJson(PreviousDialogueObject->bIsAntagonistic) : "Not attributed") << "\n\n"
 			<< "\t\t[Y]: Yes\t[N]: No\n";
 		DialogueObject.bIsAntagonistic = CoreHelpers::YesOrNo();
 
 		std::cout
 			<< "\nDid you just MURDER this person??\n"
+			<< "Previous flag is: " << (PreviousDialogueObject ? JsonFileManagerStatics::BoolParserForJson(PreviousDialogueObject->bIsVillagerKilled) : "Not attributed") << "\n\n"
 			<< "\t\t[Y]: Yes\t[N]: No\n";
 		DialogueObject.bIsVillagerKilled = CoreHelpers::YesOrNo();
 	}
 	else
 	{
-		if(!PreviousDialogueObject)
+		if (!PreviousDialogueObject)
 		{
 			DialogueObject.bIsConvinced = false;
 			DialogueObject.bIsAngered = false;
